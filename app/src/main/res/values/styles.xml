@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TextAppearance.Veda.HomeTitle" parent="TextAppearance.AppCompat.Large">
+        <item name="android:textSize">@dimen/veda_text_home_title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/veda_color_text_primary</item>
+    </style>
+
+    <style name="TextAppearance.Veda.ScreenTitle" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textSize">@dimen/veda_text_screen_title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/veda_color_text_primary</item>
+    </style>
+
+    <style name="TextAppearance.Veda.SectionTitle" parent="TextAppearance.AppCompat.Subhead">
+        <item name="android:textSize">@dimen/veda_text_section_title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/veda_color_text_primary</item>
+    </style>
+
+    <style name="TextAppearance.Veda.Title" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textSize">@dimen/veda_text_title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/veda_color_text_primary</item>
+    </style>
+
+    <style name="TextAppearance.Veda.Body" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textSize">@dimen/veda_text_body</item>
+        <item name="android:textColor">@color/veda_color_text_primary</item>
+    </style>
+
+    <style name="TextAppearance.Veda.Body.Secondary" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textSize">@dimen/veda_text_body</item>
+        <item name="android:textColor">@color/veda_color_text_secondary</item>
+    </style>
+
+    <style name="TextAppearance.Veda.Meta" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textSize">@dimen/veda_text_meta</item>
+        <item name="android:textColor">@color/veda_color_text_muted</item>
+    </style>
+
+    <style name="TextAppearance.Veda.Caption" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textSize">@dimen/veda_text_caption</item>
+        <item name="android:textColor">@color/veda_color_text_muted</item>
+    </style>
+
+    <style name="Widget.Veda.Toolbar" parent="">
+        <item name="android:background">@drawable/bg_top_bar</item>
+        <item name="android:minHeight">@dimen/veda_toolbar_height</item>
+        <item name="titleTextColor">@color/veda_color_text_primary</item>
+        <item name="subtitleTextColor">@color/veda_color_text_secondary</item>
+    </style>
+
+    <style name="Widget.Veda.Card" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/veda_color_surface_elevated</item>
+        <item name="cardCornerRadius">@dimen/veda_radius_lg</item>
+        <item name="cardElevation">@dimen/veda_elevation_card</item>
+        <item name="strokeColor">@color/veda_color_stroke</item>
+        <item name="strokeWidth">@dimen/veda_stroke_regular</item>
+        <item name="rippleColor">@color/veda_color_ripple</item>
+    </style>
+
+    <style name="Widget.Veda.Card.Subtle" parent="Widget.Veda.Card">
+        <item name="cardBackgroundColor">@color/veda_color_surface</item>
+        <item name="cardCornerRadius">@dimen/veda_radius_md</item>
+        <item name="cardElevation">@dimen/veda_elevation_none</item>
+        <item name="strokeColor">@color/veda_color_divider</item>
+        <item name="strokeWidth">@dimen/veda_stroke_hairline</item>
+    </style>
+
+    <style name="Widget.Veda.BottomNavigation" parent="Widget.Design.BottomNavigationView">
+        <item name="android:background">@drawable/bg_bottom_bar</item>
+        <item name="itemIconTint">@color/veda_nav_item_color</item>
+        <item name="itemTextColor">@color/veda_nav_item_color</item>
+        <item name="elevation">@dimen/veda_elevation_card</item>
+    </style>
+
+    <style name="Widget.Veda.FloatingActionButton" parent="Widget.Design.FloatingActionButton">
+        <item name="backgroundTint">@color/veda_color_accent</item>
+        <item name="tint">@color/veda_color_on_accent</item>
+        <item name="rippleColor">@color/veda_color_ripple</item>
+        <item name="elevation">@dimen/veda_elevation_fab</item>
+    </style>
+
+    <style name="Widget.Veda.Button.Primary" parent="Widget.MaterialComponents.Button">
+        <item name="android:minHeight">48dp</item>
+        <item name="android:textColor">@color/veda_color_on_accent</item>
+        <item name="backgroundTint">@color/veda_color_accent</item>
+        <item name="strokeColor">@color/veda_color_accent</item>
+        <item name="strokeWidth">@dimen/veda_stroke_regular</item>
+        <item name="cornerRadius">@dimen/veda_radius_md</item>
+        <item name="rippleColor">@color/veda_color_ripple</item>
+        <item name="iconTint">@color/veda_color_on_accent</item>
+    </style>
+
+    <style name="Widget.Veda.Button.Secondary" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:minHeight">48dp</item>
+        <item name="android:textColor">@color/veda_color_text_primary</item>
+        <item name="backgroundTint">@color/veda_color_surface_elevated</item>
+        <item name="strokeColor">@color/veda_color_stroke</item>
+        <item name="strokeWidth">@dimen/veda_stroke_regular</item>
+        <item name="cornerRadius">@dimen/veda_radius_md</item>
+        <item name="rippleColor">@color/veda_color_ripple</item>
+        <item name="iconTint">@color/veda_color_text_primary</item>
+    </style>
+
+</resources>

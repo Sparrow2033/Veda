@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Base.Theme.Veda" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/veda_color_accent</item>
+        <item name="colorPrimaryVariant">@color/veda_color_accent</item>
+        <item name="colorOnPrimary">@color/veda_color_on_accent</item>
+
+        <item name="colorSecondary">@color/veda_color_accent</item>
+        <item name="colorSecondaryVariant">@color/veda_color_accent</item>
+        <item name="colorOnSecondary">@color/veda_color_on_accent</item>
+
+        <item name="colorSurface">@color/veda_color_surface</item>
+        <item name="colorOnSurface">@color/veda_color_text_primary</item>
+
+        <item name="colorError">@color/veda_color_error</item>
+        <item name="colorOnError">@color/white</item>
+
+        <item name="android:colorBackground">@color/veda_color_background</item>
+        <item name="android:windowBackground">@color/veda_color_background</item>
+        <item name="android:statusBarColor">@color/veda_color_background</item>
+        <item name="android:navigationBarColor">@color/veda_color_surface_elevated</item>
+
+        <item name="android:textColorPrimary">@color/veda_color_text_primary</item>
+        <item name="android:textColorSecondary">@color/veda_color_text_secondary</item>
+        <item name="android:textColorHint">@color/veda_color_text_muted</item>
+        <item name="android:colorAccent">@color/veda_color_accent</item>
+
+        <item name="colorControlNormal">@color/veda_color_text_primary</item>
+        <item name="colorControlActivated">@color/veda_color_accent</item>
+
+        <item name="materialCardViewStyle">@style/Widget.Veda.Card</item>
+        <item name="toolbarStyle">@style/Widget.Veda.Toolbar</item>
+        <item name="bottomNavigationStyle">@style/Widget.Veda.BottomNavigation</item>
+        <item name="floatingActionButtonStyle">@style/Widget.Veda.FloatingActionButton</item>
+        <item name="materialButtonStyle">@style/Widget.Veda.Button.Primary</item>
+    </style>
+
+    <style name="Theme.Veda" parent="Base.Theme.Veda" />
+
+</resources>

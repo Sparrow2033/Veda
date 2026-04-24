@@ -1,0 +1,113 @@
+<resources>
+    <string name="app_name">Veda</string>
+
+    <string name="home_welcome_title">Добро пожаловать!</string>
+    <string name="home_welcome_subtitle">От хаоса записей - к системе знаний.</string>
+    <string name="home_create_note">Создать заметку</string>
+
+    <string name="notes_empty_title">Пока нет заметок</string>
+    <string name="notes_empty_subtitle">Нажми +, чтобы создать первую заметку и начать собирать свою систему знаний.</string>
+    <string name="notes_create_note">Создать заметку</string>
+    <string name="notes_subjects">Предметы</string>
+
+    <string name="note_without_subject">Без предмета</string>
+    <string name="note_updated_at">Обновлено: %1$s</string>
+    <string name="note_action_edit">Редактировать</string>
+    <string name="note_action_delete">Удалить</string>
+
+    <string name="homework_add">Добавить задание</string>
+    <string name="homework_empty">Заданий пока нет</string>
+    <string name="homework_hint_long_tap">Долгий тап по задаче — отметить как готово или вернуть в работу</string>
+    <string name="homework_filter_all">Все</string>
+    <string name="homework_filter_today">Сегодня</string>
+    <string name="homework_filter_week">Неделя</string>
+    <string name="homework_filter_overdue">Просрочено</string>
+    <string name="homework_filter_upcoming">Ближайшие</string>
+    <string name="homework_due_date">Дедлайн: %1$s</string>
+    <string name="homework_no_deadline">Без дедлайна</string>
+    <string name="homework_header_no_deadline">Без дедлайна</string>
+    <string name="homework_status_todo">Нужно сделать</string>
+    <string name="homework_status_progress">В процессе</string>
+    <string name="homework_status_done">Готово</string>
+    <string name="homework_status_canceled">Отменено</string>
+    <string name="homework_priority_low">Низкий приоритет</string>
+    <string name="homework_priority_medium">Средний приоритет</string>
+    <string name="homework_priority_high">Высокий приоритет</string>
+    <string name="homework_toast_done">Отмечено: готово</string>
+    <string name="homework_toast_todo">Отмечено: нужно сделать</string>
+
+    <string name="settings_title">Настройки</string>
+    <string name="settings_subtitle">Настрой приложение под свой ритм работы и учёбы.</string>
+
+    <string name="settings_section_appearance">Внешний вид</string>
+    <string name="settings_section_appearance_desc">Тема и размер текста для повседневной работы с приложением.</string>
+
+    <string name="settings_section_notes">Заметки</string>
+    <string name="settings_section_notes_desc">Параметры, влияющие на список заметок и действия с ними.</string>
+
+    <string name="settings_section_homework">Домашние задания</string>
+    <string name="settings_section_homework_desc">Поведение списка заданий, фильтров и стартового раздела.</string>
+
+    <string name="settings_section_demo">Демо-библиотека знаний</string>
+    <string name="settings_section_demo_desc">Управление встроенным примером большой сети заметок для списка и графа.</string>
+
+    <string name="settings_theme_title">Тема</string>
+    <string name="settings_theme_desc">Системная, светлая или тёмная тема интерфейса.</string>
+
+    <string name="settings_text_size_title">Размер текста</string>
+    <string name="settings_text_size_desc">Более крупный текст делает экраны заметно легче для чтения.</string>
+    <string name="settings_text_size_normal">Обычный</string>
+    <string name="settings_text_size_large">Крупный</string>
+
+    <string name="settings_confirm_delete">Подтверждать удаление</string>
+    <string name="settings_confirm_delete_desc">Показывать подтверждение перед удалением заметок и других элементов.</string>
+
+    <string name="settings_notes_sort_title">Сортировка заметок</string>
+    <string name="settings_notes_sort_desc">Выбери, как по умолчанию упорядочивать список заметок.</string>
+
+    <string name="settings_homework_sort_title">Сортировка ДЗ</string>
+    <string name="settings_homework_sort_desc">Как упорядочивать задания в списке по умолчанию.</string>
+
+    <string name="settings_save_homework_filters">Сохранять фильтры ДЗ</string>
+    <string name="settings_save_homework_filters_desc">Запоминать последний выбранный фильтр на экране заданий.</string>
+
+    <string name="settings_open_last_section">Открывать последний раздел при запуске</string>
+    <string name="settings_open_last_section_desc">После запуска сразу переходить в последний открытый основной раздел.</string>
+
+    <string name="schedule_empty_title">Ссылка на расписание не задана</string>
+    <string name="schedule_empty_subtitle">Добавь ссылку на сайт расписания школы, и он будет открываться прямо внутри приложения.</string>
+    <string name="schedule_set_url">Указать ссылку</string>
+    <string name="schedule_action_link">Ссылка</string>
+    <string name="schedule_action_reload">Обновить</string>
+    <string name="schedule_action_browser">В браузер</string>
+    <string name="schedule_dialog_title">Ссылка на расписание</string>
+    <string name="schedule_dialog_save">Сохранить</string>
+    <string name="schedule_dialog_cancel">Отмена</string>
+    <string name="schedule_dialog_open_browser">Открыть в браузере</string>
+    <string name="schedule_invalid_url">Введи корректную ссылку (http/https)</string>
+    <string name="schedule_error_loading">Не удалось загрузить страницу (%1$d)</string>
+
+    <string name="demo_section_title">Демо-библиотека знаний</string>
+    <string name="demo_section_description">Загрузи пример большой связанной библиотеки заметок, чтобы посмотреть, как работает развитая сеть знаний в списке и графе.</string>
+
+    <string name="demo_load_action">Загрузить демо-библиотеку знаний</string>
+    <string name="demo_delete_action">Удалить демо-библиотеку</string>
+    <string name="demo_reload_action">Пересоздать библиотеку</string>
+
+    <string name="demo_load_dialog_title">Загрузить демо-библиотеку?</string>
+    <string name="demo_load_dialog_message">В приложение будут добавлены демонстрационные заметки и предметы для примера развитой сети знаний.</string>
+
+    <string name="demo_delete_dialog_title">Удалить демо-библиотеку?</string>
+    <string name="demo_delete_dialog_message">Будут удалены только демонстрационные заметки со служебным признаком. Обычные пользовательские заметки не затронутся.</string>
+
+    <string name="demo_already_loaded_title">Демо-библиотека уже загружена</string>
+    <string name="demo_already_loaded_message">В базе уже есть демонстрационные заметки. Можно оставить всё как есть или пересоздать библиотеку заново.</string>
+
+    <string name="demo_import_result_title">Демо-библиотека загружена</string>
+    <string name="demo_import_result_message">Добавлено заметок: %1$d\nСоздано предметов: %2$d\nРазрешено связей: %3$d\n\nТеперь можно открыть список заметок и граф, чтобы посмотреть на сеть знаний.</string>
+
+    <string name="demo_delete_result_title">Демо-библиотека удалена</string>
+    <string name="demo_delete_result_message">Удалено демонстрационных заметок: %1$d</string>
+
+    <string name="demo_operation_error">Не удалось выполнить операцию: %1$s</string>
+</resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="pref_theme_mode_entries">
+        <item>Системная</item>
+        <item>Светлая</item>
+        <item>Тёмная</item>
+    </string-array>
+
+    <string-array name="pref_notes_sort_entries">
+        <item>Новые сверху</item>
+        <item>Старые сверху</item>
+        <item>По алфавиту</item>
+    </string-array>
+
+    <string-array name="pref_homework_sort_entries">
+        <item>По дедлайну</item>
+        <item>По приоритету</item>
+        <item>По статусу</item>
+    </string-array>
+
+</resources>

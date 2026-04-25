@@ -58,7 +58,6 @@ public final class HomeworkAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     && oldTask.dueDate == newTask.dueDate
                     && oldTask.status == newTask.status
                     && oldTask.priority == newTask.priority
-                    && oldTask.updatedAt == newTask.updatedAt
                     && Objects.equals(oldTask.title, newTask.title)
                     && Objects.equals(oldTask.description, newTask.description);
         }

@@ -1,7 +1,6 @@
 package com.veda.app.ui.homework;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertIterableEquals;
 
 import com.veda.app.data.entity.HomeworkEntity;
 import com.veda.app.utils.AppPrefs;
@@ -103,6 +102,6 @@ public class HomeworkListTransformsTest {
         for (HomeworkEntity entity : input) {
             actual.add(entity.id);
         }
-        assertIterableEquals(expectedIds, actual);
+        assertEquals(expectedIds, actual);
     }
 }

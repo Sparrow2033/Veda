@@ -29,7 +29,7 @@ import java.util.Set;
                 LinkEntity.class,
                 HomeworkEntity.class
         },
-        version = 6,
+        version = 7,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
@@ -118,6 +118,23 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    public static final Migration MIGRATION_6_7 = new Migration(6, 7) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_homework_dueDate_updatedAt` ON `homework` (`dueDate`, `updatedAt`)");
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_homework_status_dueDate_updatedAt` ON `homework` (`status`, `dueDate`, `updatedAt`)");
+            db.execSQL("CREATE INDEX IF NOT EXISTS `index_notes_subjectId_updatedAt` ON `notes` (`subjectId`, `updatedAt`)");
+
+            db.execSQL(
+                    "DELETE FROM `links` " +
+                            "WHERE `id` NOT IN (" +
+                            "SELECT MIN(`id`) FROM `links` GROUP BY `fromNoteId`, `toNoteId`" +
+                            ")"
+            );
+            db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_links_fromNoteId_toNoteId` ON `links` (`fromNoteId`, `toNoteId`)");
+        }
+    };
+
     public static AppDatabase get(Context context) {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
@@ -127,7 +144,14 @@ public abstract class AppDatabase extends RoomDatabase {
                                     AppDatabase.class,
                                     DB_NAME
                             )
-                            .addMigrations(MIGRATION_1_2, MIGRATION_2_5, MIGRATION_3_5, MIGRATION_4_5, MIGRATION_5_6)
+                            .addMigrations(
+                                    MIGRATION_1_2,
+                                    MIGRATION_2_5,
+                                    MIGRATION_3_5,
+                                    MIGRATION_4_5,
+                                    MIGRATION_5_6,
+                                    MIGRATION_6_7
+                            )
                             .build();
                 }
             }

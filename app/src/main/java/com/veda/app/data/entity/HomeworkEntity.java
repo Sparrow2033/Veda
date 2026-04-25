@@ -21,7 +21,9 @@ import androidx.room.PrimaryKey;
         indices = {
                 @Index("subjectId"),
                 @Index("dueDate"),
-                @Index("status")
+                @Index("status"),
+                @Index(value = {"dueDate", "updatedAt"}),
+                @Index(value = {"status", "dueDate", "updatedAt"})
         }
 )
 public class HomeworkEntity {

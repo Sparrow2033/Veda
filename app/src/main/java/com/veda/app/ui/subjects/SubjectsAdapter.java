@@ -25,6 +25,7 @@ public class SubjectsAdapter extends ListAdapter<SubjectEntity, SubjectsAdapter.
     public SubjectsAdapter(Listener listener) {
         super(DIFF);
         this.listener = listener;
+        setHasStableIds(true);
     }
 
     private static final DiffUtil.ItemCallback<SubjectEntity> DIFF = new DiffUtil.ItemCallback<>() {
@@ -36,8 +37,7 @@ public class SubjectsAdapter extends ListAdapter<SubjectEntity, SubjectsAdapter.
         @Override
         public boolean areContentsTheSame(@NonNull SubjectEntity oldItem, @NonNull SubjectEntity newItem) {
             return safeEq(oldItem.name, newItem.name)
-                    && oldItem.color == newItem.color
-                    && oldItem.sortOrder == newItem.sortOrder;
+                    && oldItem.color == newItem.color;
         }
 
         private boolean safeEq(Object a, Object b) {
@@ -79,6 +79,11 @@ public class SubjectsAdapter extends ListAdapter<SubjectEntity, SubjectsAdapter.
         holder.b.btnEdit.setOnClickListener(v -> {
             if (listener != null) listener.onLongClick(s);
         });
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return getItem(position).id;
     }
 
     static class VH extends RecyclerView.ViewHolder {

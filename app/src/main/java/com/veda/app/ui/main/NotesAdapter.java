@@ -26,6 +26,7 @@ public class NotesAdapter extends ListAdapter<NoteListItem, NotesAdapter.VH> {
     public NotesAdapter(Listener listener) {
         super(DIFF);
         this.listener = listener;
+        setHasStableIds(true);
     }
 
     private static final DiffUtil.ItemCallback<NoteListItem> DIFF = new DiffUtil.ItemCallback<>() {
@@ -70,6 +71,11 @@ public class NotesAdapter extends ListAdapter<NoteListItem, NotesAdapter.VH> {
         holder.b.updatedAt.setText(date);
 
         holder.b.getRoot().setOnClickListener(v -> listener.onNoteClick(item.id));
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return getItem(position).id;
     }
 
     static class VH extends RecyclerView.ViewHolder {

@@ -31,11 +31,11 @@ public class EditNoteViewModel extends AndroidViewModel {
         return repo.observeNote(noteId);
     }
 
-    public void loadNotesForPicker(long excludeId, VedaRepository.NotesCallback callback) {
+    public void loadNotesForPicker(long excludeId, VedaRepository.ResultCallback<List<NoteListItem>> callback) {
         repo.loadNotesForPicker(excludeId, callback);
     }
 
-    public void insertSubject(String name, int color, int sortOrder, VedaRepository.IdCallback callback) {
+    public void insertSubject(String name, int color, int sortOrder, VedaRepository.ResultCallback<Long> callback) {
         repo.insertSubject(new SubjectEntity(name, color, sortOrder), callback);
     }
 
@@ -45,7 +45,7 @@ public class EditNoteViewModel extends AndroidViewModel {
             String contentHtml,
             String tags,
             List<Long> toNoteIds,
-            VedaRepository.IdCallback callback
+            VedaRepository.ResultCallback<Long> callback
     ) {
         long now = System.currentTimeMillis();
         NoteEntity note = new NoteEntity(subjectId, title, contentHtml, tags, now, now);

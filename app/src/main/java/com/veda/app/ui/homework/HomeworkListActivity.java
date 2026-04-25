@@ -2,7 +2,6 @@ package com.veda.app.ui.homework;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,10 +20,7 @@ import com.veda.app.ui.nav.VedaTopBar;
 import com.veda.app.utils.AppPrefs;
 import com.veda.app.utils.UiTextSize;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 public final class HomeworkListActivity extends AppCompatActivity implements ScrollToTop {
@@ -32,7 +28,6 @@ public final class HomeworkListActivity extends AppCompatActivity implements Scr
     private ActivityHomeworkListBinding binding;
     private HomeworkListViewModel vm;
     private HomeworkAdapter adapter;
-    private VedaRepository repo;
 
     private boolean firstDataLoaded = false;
     private HomeworkListViewModel.Filter currentFilter = HomeworkListViewModel.Filter.ALL;
@@ -49,7 +44,6 @@ public final class HomeworkListActivity extends AppCompatActivity implements Scr
         VedaTopBar.setup(this, binding.toolbar);
         BottomNav.bind(this, binding.bottomNav, R.id.nav_homework);
 
-        repo = VedaRepository.get(this);
         vm = new ViewModelProvider(this).get(HomeworkListViewModel.class);
 
         adapter = new HomeworkAdapter(new HomeworkAdapter.Listener() {
@@ -60,14 +54,16 @@ public final class HomeworkListActivity extends AppCompatActivity implements Scr
 
             @Override
             public void onItemLongClick(@NonNull HomeworkEntity item) {
-                toggleDone(item);
+                int toastRes = vm.toggledStateToastRes(item);
+                vm.toggleDone(item);
+                Toast.makeText(HomeworkListActivity.this, toastRes, Toast.LENGTH_SHORT).show();
             }
         });
 
         binding.recycler.setLayoutManager(new LinearLayoutManager(this));
         binding.recycler.setAdapter(adapter);
 
-        repo.observeSubjects().observe(this, adapter::setSubjects);
+        VedaRepository.get(this).observeSubjects().observe(this, adapter::setSubjects);
 
         binding.emptyText.setVisibility(android.view.View.GONE);
 
@@ -85,7 +81,7 @@ public final class HomeworkListActivity extends AppCompatActivity implements Scr
                 NavNoAnim.start(this, new Intent(this, HomeworkEditActivity.class))
         );
 
-        vm.items().observe(this, this::render);
+        vm.rows().observe(this, this::renderRows);
     }
 
     private void restoreFilterIfNeeded() {
@@ -116,111 +112,23 @@ public final class HomeworkListActivity extends AppCompatActivity implements Scr
         AppPrefs.setHomeworkLastFilter(this, f.name());
     }
 
-    private void render(List<HomeworkEntity> list) {
+    private void renderRows(List<HomeworkRowItem> rows) {
         if (!firstDataLoaded) {
-            if (list == null) return;
+            if (rows == null) return;
             firstDataLoaded = true;
         }
 
-        List<HomeworkEntity> safe = list == null ? Collections.emptyList() : new ArrayList<>(list);
+        List<HomeworkRowItem> safe = rows == null ? Collections.emptyList() : rows;
 
         binding.emptyText.setVisibility(safe.isEmpty() ? android.view.View.VISIBLE : android.view.View.GONE);
-
-        applyHomeworkSort(safe);
-
-        List<HomeworkRowItem> rows = buildRows(safe);
-        adapter.submit(rows);
+        adapter.submit(safe);
     }
 
-    private void applyHomeworkSort(@NonNull List<HomeworkEntity> list) {
-        AppPrefs.HomeworkSort sort = AppPrefs.getHomeworkSort(this);
-
-        if (sort == AppPrefs.HomeworkSort.PRIORITY) {
-            list.sort((a, b) -> Integer.compare(b.priority, a.priority));
-            return;
-        }
-        if (sort == AppPrefs.HomeworkSort.STATUS) {
-            list.sort((a, b) -> Integer.compare(a.status, b.status));
-            return;
-        }
-
-        list.sort((a, b) -> {
-            long da = a.dueDate <= 0 ? Long.MAX_VALUE : a.dueDate;
-            long db = b.dueDate <= 0 ? Long.MAX_VALUE : b.dueDate;
-            return Long.compare(da, db);
-        });
-    }
 
     private void openEditor(long homeworkId) {
         Intent i = new Intent(this, HomeworkEditActivity.class);
         i.putExtra(HomeworkEditActivity.EXTRA_HOMEWORK_ID, homeworkId);
         NavNoAnim.start(this, i);
-    }
-
-    private void toggleDone(@NonNull HomeworkEntity item) {
-        int newStatus = item.status == HomeworkEntity.STATUS_DONE
-                ? HomeworkEntity.STATUS_TODO
-                : HomeworkEntity.STATUS_DONE;
-
-        long now = System.currentTimeMillis();
-
-        HomeworkEntity updated = new HomeworkEntity(
-                item.id,
-                item.subjectId,
-                item.title == null ? "" : item.title,
-                item.description == null ? "" : item.description,
-                item.dueDate,
-                newStatus,
-                item.priority,
-                item.createdAt,
-                now
-        );
-
-        repo.updateHomework(updated);
-
-        Toast.makeText(
-                this,
-                newStatus == HomeworkEntity.STATUS_DONE
-                        ? getString(R.string.homework_toast_done)
-                        : getString(R.string.homework_toast_todo),
-                Toast.LENGTH_SHORT
-        ).show();
-    }
-
-    @NonNull
-    private List<HomeworkRowItem> buildRows(@NonNull List<HomeworkEntity> source) {
-        if (source.isEmpty()) return Collections.emptyList();
-
-        List<HomeworkEntity> withDue = new ArrayList<>();
-        List<HomeworkEntity> noDue = new ArrayList<>();
-
-        for (HomeworkEntity e : source) {
-            if (e == null) continue;
-            if (e.dueDate > 0) withDue.add(e);
-            else noDue.add(e);
-        }
-
-        noDue.sort((a, b) -> Long.compare(b.updatedAt, a.updatedAt));
-
-        List<HomeworkRowItem> out = new ArrayList<>();
-
-        long prevDay = Long.MIN_VALUE;
-        for (HomeworkEntity e : withDue) {
-            long day = startOfDay(e.dueDate);
-            if (day != prevDay) {
-                prevDay = day;
-                String header = DateFormat.getDateFormat(this).format(new Date(day));
-                out.add(HomeworkRowItem.header(header, -day));
-            }
-            out.add(HomeworkRowItem.task(e));
-        }
-
-        if (!noDue.isEmpty()) {
-            out.add(HomeworkRowItem.header(getString(R.string.homework_header_no_deadline), -1L));
-            for (HomeworkEntity e : noDue) out.add(HomeworkRowItem.task(e));
-        }
-
-        return out;
     }
 
     private void updateFilterUi(@NonNull HomeworkListViewModel.Filter filter) {
@@ -240,15 +148,7 @@ public final class HomeworkListActivity extends AppCompatActivity implements Scr
                 : R.drawable.bg_homework_filter_inactive);
     }
 
-    private static long startOfDay(long timeMillis) {
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(timeMillis);
-        c.set(Calendar.HOUR_OF_DAY, 0);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
-        return c.getTimeInMillis();
-    }
+
 
     @Override
     public void scrollToTop() {

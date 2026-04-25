@@ -68,7 +68,7 @@
             android:layout_marginTop="12dp"
             android:layout_marginEnd="16dp"
             android:gravity="center"
-            android:text="Глобальный граф · узлов: 0 · связей: 0"
+            android:text="@string/graph_empty"
             android:textAlignment="center"
             android:textColor="#FFFFFF"
             android:textSize="12sp"
@@ -352,7 +352,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text="Загрузка графа..."
+                    android:text="@string/graph_loading"
                     android:textColor="#FFFFFF"
                     android:textSize="15sp"
                     android:textStyle="bold" />

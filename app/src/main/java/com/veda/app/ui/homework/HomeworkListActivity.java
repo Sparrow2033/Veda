@@ -54,9 +54,7 @@ public final class HomeworkListActivity extends AppCompatActivity implements Scr
 
             @Override
             public void onItemLongClick(@NonNull HomeworkEntity item) {
-                int toastRes = vm.toggledStateToastRes(item);
                 vm.toggleDone(item);
-                Toast.makeText(HomeworkListActivity.this, toastRes, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -82,6 +80,12 @@ public final class HomeworkListActivity extends AppCompatActivity implements Scr
         );
 
         vm.rows().observe(this, this::renderRows);
+        vm.screenState().observe(this, this::renderState);
+        vm.operationMessageRes().observe(this, messageRes -> {
+            if (messageRes == null || messageRes == 0) return;
+            Toast.makeText(this, messageRes, Toast.LENGTH_SHORT).show();
+            vm.consumeOperationMessage();
+        });
     }
 
     private void restoreFilterIfNeeded() {
@@ -122,6 +126,31 @@ public final class HomeworkListActivity extends AppCompatActivity implements Scr
 
         binding.emptyText.setVisibility(safe.isEmpty() ? android.view.View.VISIBLE : android.view.View.GONE);
         adapter.submit(safe);
+    }
+
+    private void renderState(HomeworkListViewModel.ScreenState state) {
+        if (state == null) return;
+        switch (state) {
+            case LOADING:
+                binding.emptyText.setVisibility(android.view.View.VISIBLE);
+                binding.emptyText.setText(R.string.state_loading);
+                binding.recycler.setVisibility(android.view.View.GONE);
+                break;
+            case CONTENT:
+                binding.recycler.setVisibility(android.view.View.VISIBLE);
+                break;
+            case EMPTY:
+                binding.emptyText.setVisibility(android.view.View.VISIBLE);
+                binding.emptyText.setText(R.string.homework_empty);
+                binding.recycler.setVisibility(android.view.View.VISIBLE);
+                break;
+            case ERROR:
+            default:
+                binding.emptyText.setVisibility(android.view.View.VISIBLE);
+                binding.emptyText.setText(R.string.homework_error_load);
+                binding.recycler.setVisibility(android.view.View.GONE);
+                break;
+        }
     }
 
 

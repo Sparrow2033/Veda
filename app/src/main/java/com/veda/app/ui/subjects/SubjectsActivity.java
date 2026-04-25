@@ -9,13 +9,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.veda.app.R;
 import com.veda.app.data.entity.SubjectEntity;
 import com.veda.app.databinding.ActivitySubjectsBinding;
 import com.veda.app.utils.SubjectPalette;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.veda.app.R;
 
 public class SubjectsActivity extends AppCompatActivity implements SubjectsAdapter.Listener {
 
@@ -33,7 +33,7 @@ public class SubjectsActivity extends AppCompatActivity implements SubjectsAdapt
 
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        binding.toolbar.setTitle("Предметы");
+        binding.toolbar.setTitle(R.string.notes_subjects);
 
         vm = new ViewModelProvider(this).get(SubjectsViewModel.class);
 
@@ -44,7 +44,12 @@ public class SubjectsActivity extends AppCompatActivity implements SubjectsAdapt
         vm.subjects().observe(this, list -> {
             current = list == null ? new ArrayList<>() : list;
             adapter.submitList(current);
-            binding.empty.setVisibility(current.isEmpty() ? android.view.View.VISIBLE : android.view.View.GONE);
+        });
+        vm.screenState().observe(this, this::renderState);
+        vm.operationMessageRes().observe(this, messageRes -> {
+            if (messageRes == null || messageRes == 0) return;
+            Toast.makeText(this, messageRes, Toast.LENGTH_SHORT).show();
+            vm.consumeOperationMessage();
         });
 
         binding.fab.setOnClickListener(v -> showCreateDialog());
@@ -58,7 +63,7 @@ public class SubjectsActivity extends AppCompatActivity implements SubjectsAdapt
 
     private void showCreateDialog() {
         EditText input = new EditText(this);
-        input.setHint("Название предмета");
+        input.setHint(R.string.subject_name_hint);
         input.setSingleLine(true);
         input.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 16);
 
@@ -67,32 +72,30 @@ public class SubjectsActivity extends AppCompatActivity implements SubjectsAdapt
         input.setPaddingRelative(padH, padV, padH, padV);
 
         new AlertDialog.Builder(this)
-                .setTitle("Новый предмет")
+                .setTitle(R.string.subject_add_title)
                 .setView(input)
-                .setPositiveButton("Далее", (d, w) -> {
+                .setPositiveButton(R.string.action_next, (d, w) -> {
                     String name = input.getText() == null ? "" : input.getText().toString().trim();
                     if (name.isBlank()) {
-                        Toast.makeText(this, "Название не должно быть пустым", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.subject_name_empty, Toast.LENGTH_SHORT).show();
                         return;
                     }
                     pickColorAndCreate(name);
                 })
-                .setNegativeButton("Отмена", null)
+                .setNegativeButton(R.string.action_cancel, null)
                 .show();
     }
 
     private void pickColorAndCreate(String name) {
         new AlertDialog.Builder(this)
-                .setTitle("Цвет предмета")
+                .setTitle(R.string.subject_color_title)
                 .setItems(SubjectPalette.COLOR_NAMES, (d, which) -> {
                     int color = SubjectPalette.clampColorByIndex(which);
                     int sortOrder = current.size() + 1;
 
-                    vm.addSubject(name, color, sortOrder, id ->
-                            Toast.makeText(this, "Добавлено", Toast.LENGTH_SHORT).show()
-                    );
+                    vm.addSubject(name, color, sortOrder, id -> { });
                 })
-                .setNegativeButton("Отмена", null)
+                .setNegativeButton(R.string.action_cancel, null)
                 .show();
     }
 
@@ -104,10 +107,10 @@ public class SubjectsActivity extends AppCompatActivity implements SubjectsAdapt
     @Override
     public void onLongClick(SubjectEntity subject) {
         new AlertDialog.Builder(this)
-                .setTitle("Удалить предмет?")
-                .setMessage("Заметки с этим предметом станут 'Без предмета'.")
-                .setPositiveButton("Удалить", (d, w) -> vm.delete(subject))
-                .setNegativeButton("Отмена", null)
+                .setTitle(R.string.subject_delete_title)
+                .setMessage(R.string.subject_delete_message)
+                .setPositiveButton(R.string.action_delete, (d, w) -> vm.delete(subject))
+                .setNegativeButton(R.string.action_cancel, null)
                 .show();
     }
 
@@ -133,18 +136,18 @@ public class SubjectsActivity extends AppCompatActivity implements SubjectsAdapt
             };
 
             new androidx.appcompat.app.AlertDialog.Builder(this)
-                    .setTitle("Цвет")
+                    .setTitle(R.string.subject_color_title)
                     .setItems(names, (d, which) -> {
                         pickedColor[0] = colors[Math.max(0, Math.min(which, colors.length - 1))];
                     })
-                    .setNegativeButton("Отмена", null)
+                    .setNegativeButton(R.string.action_cancel, null)
                     .show();
         });
 
         new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Редактировать предмет")
+                .setTitle(R.string.subject_edit_title)
                 .setView(v)
-                .setPositiveButton("Сохранить", (d, w) -> {
+                .setPositiveButton(R.string.action_save, (d, w) -> {
                     String newName = nameInput.getText() == null ? "" : nameInput.getText().toString().trim();
                     if (newName.isEmpty()) newName = subject.name;
 
@@ -154,20 +157,7 @@ public class SubjectsActivity extends AppCompatActivity implements SubjectsAdapt
                     // важно: это вызывает repo.updateSubject(...)
                     vm.update(subject);
                 })
-                .setNegativeButton("Отмена", null)
-                .show();
-    }
-
-    private void pickColorAndUpdate(SubjectEntity subject, String newName) {
-        new AlertDialog.Builder(this)
-                .setTitle("Цвет предмета")
-                .setItems(SubjectPalette.COLOR_NAMES, (d, which) -> {
-                    subject.name = newName;
-                    subject.color = SubjectPalette.clampColorByIndex(which);
-                    vm.update(subject);
-                    Toast.makeText(this, "Обновлено", Toast.LENGTH_SHORT).show();
-                })
-                .setNegativeButton("Отмена", null)
+                .setNegativeButton(R.string.action_cancel, null)
                 .show();
     }
 
@@ -178,5 +168,34 @@ public class SubjectsActivity extends AppCompatActivity implements SubjectsAdapt
     private int dp(int value) {
         float density = getResources().getDisplayMetrics().density;
         return Math.round(value * density);
+    }
+
+    private void renderState(SubjectsViewModel.ScreenState state) {
+        if (state == null) return;
+        switch (state) {
+            case LOADING:
+                binding.empty.setVisibility(android.view.View.VISIBLE);
+                binding.emptyTitle.setText(R.string.state_loading);
+                binding.emptySubtitle.setText(R.string.subjects_loading_subtitle);
+                binding.recycler.setVisibility(android.view.View.GONE);
+                break;
+            case CONTENT:
+                binding.empty.setVisibility(android.view.View.GONE);
+                binding.recycler.setVisibility(android.view.View.VISIBLE);
+                break;
+            case EMPTY:
+                binding.empty.setVisibility(android.view.View.VISIBLE);
+                binding.emptyTitle.setText(R.string.subjects_empty_title);
+                binding.emptySubtitle.setText(R.string.subjects_empty_subtitle);
+                binding.recycler.setVisibility(android.view.View.GONE);
+                break;
+            case ERROR:
+            default:
+                binding.empty.setVisibility(android.view.View.VISIBLE);
+                binding.emptyTitle.setText(R.string.subjects_error_title);
+                binding.emptySubtitle.setText(R.string.subjects_error_subtitle);
+                binding.recycler.setVisibility(android.view.View.GONE);
+                break;
+        }
     }
 }

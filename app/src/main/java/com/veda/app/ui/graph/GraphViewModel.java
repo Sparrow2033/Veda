@@ -40,6 +40,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GraphViewModel extends AndroidViewModel {
+    public enum ScreenState {
+        LOADING,
+        CONTENT,
+        EMPTY,
+        ERROR
+    }
 
     private static final Pattern INTERNAL_NOTE_LINK_PATTERN =
             Pattern.compile("veda://note/(\\d+)", Pattern.CASE_INSENSITIVE);
@@ -47,6 +53,7 @@ public class GraphViewModel extends AndroidViewModel {
     private final MutableLiveData<String> payloadJson = new MutableLiveData<>("");
     private final MutableLiveData<Boolean> loading = new MutableLiveData<>(true);
     private final MutableLiveData<String> statusText = new MutableLiveData<>("Загрузка графа...");
+    private final MutableLiveData<ScreenState> screenState = new MutableLiveData<>(ScreenState.LOADING);
     private final MutableLiveData<GraphMode> graphMode = new MutableLiveData<>(GraphMode.GLOBAL);
     private final MutableLiveData<Long> focusNoteId = new MutableLiveData<>(-1L);
     private final MutableLiveData<Integer> localDepth = new MutableLiveData<>(2);
@@ -74,6 +81,10 @@ public class GraphViewModel extends AndroidViewModel {
         return statusText;
     }
 
+    public LiveData<ScreenState> getScreenState() {
+        return screenState;
+    }
+
     public LiveData<GraphMode> getGraphMode() {
         return graphMode;
     }
@@ -93,6 +104,7 @@ public class GraphViewModel extends AndroidViewModel {
         final int requestedDepth = clampDepth(localDepth.getValue());
 
         postLoading(true);
+        mainHandler.post(() -> screenState.setValue(ScreenState.LOADING));
 
         executor.execute(() -> {
             try {
@@ -109,6 +121,7 @@ public class GraphViewModel extends AndroidViewModel {
                     payloadJson.setValue(result.payloadJson);
                     statusText.setValue(result.status);
                     loading.setValue(false);
+                    screenState.setValue(result.nodeCount > 0 ? ScreenState.CONTENT : ScreenState.EMPTY);
                 });
             } catch (Throwable throwable) {
                 final String fallbackPayload = buildEmptyPayloadJson();
@@ -119,6 +132,7 @@ public class GraphViewModel extends AndroidViewModel {
                     payloadJson.setValue(fallbackPayload);
                     statusText.setValue("Граф не удалось загрузить");
                     loading.setValue(false);
+                    screenState.setValue(ScreenState.ERROR);
                 });
             }
         });
@@ -368,7 +382,8 @@ public class GraphViewModel extends AndroidViewModel {
                 status,
                 resolvedMode,
                 resolvedFocusId,
-                requestedDepth
+                requestedDepth,
+                visibleNodes.size()
         );
     }
 
@@ -1197,13 +1212,15 @@ public class GraphViewModel extends AndroidViewModel {
         final GraphMode mode;
         final long focusId;
         final int depth;
+        final int nodeCount;
 
-        UiGraphResult(String payloadJson, String status, GraphMode mode, long focusId, int depth) {
+        UiGraphResult(String payloadJson, String status, GraphMode mode, long focusId, int depth, int nodeCount) {
             this.payloadJson = payloadJson;
             this.status = status;
             this.mode = mode;
             this.focusId = focusId;
             this.depth = depth;
+            this.nodeCount = nodeCount;
         }
     }
 

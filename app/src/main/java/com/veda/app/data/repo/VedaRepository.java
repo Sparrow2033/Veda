@@ -76,17 +76,25 @@ public final class VedaRepository {
     }
 
     public void updateSubject(SubjectEntity subject) {
-        runDisk(() -> {
+        updateSubject(subject, null);
+    }
+
+    public void updateSubject(SubjectEntity subject, @Nullable ResultCallback<Boolean> callback) {
+        runDiskSafe(() -> {
             subjectDao.update(subject);
-            return null;
-        }, null);
+            return true;
+        }, callback, false);
     }
 
     public void deleteSubject(SubjectEntity subject) {
-        runDisk(() -> {
+        deleteSubject(subject, null);
+    }
+
+    public void deleteSubject(SubjectEntity subject, @Nullable ResultCallback<Boolean> callback) {
+        runDiskSafe(() -> {
             subjectDao.delete(subject);
-            return null;
-        }, null);
+            return true;
+        }, callback, false);
     }
 
     public void ensureDefaultSubjects() {
@@ -205,17 +213,25 @@ public final class VedaRepository {
     }
 
     public void updateHomework(HomeworkEntity homework) {
-        runDisk(() -> {
+        updateHomework(homework, null);
+    }
+
+    public void updateHomework(HomeworkEntity homework, @Nullable ResultCallback<Boolean> callback) {
+        runDiskSafe(() -> {
             homeworkDao.update(homework);
-            return null;
-        }, null);
+            return true;
+        }, callback, false);
     }
 
     public void deleteHomework(HomeworkEntity homework) {
-        runDisk(() -> {
+        deleteHomework(homework, null);
+    }
+
+    public void deleteHomework(HomeworkEntity homework, @Nullable ResultCallback<Boolean> callback) {
+        runDiskSafe(() -> {
             homeworkDao.delete(homework);
-            return null;
-        }, null);
+            return true;
+        }, callback, false);
     }
 
     public void deleteHomeworkById(long id) {
@@ -228,6 +244,20 @@ public final class VedaRepository {
     private <T> void runDisk(RepoCommand<T> command, @Nullable ResultCallback<T> callback) {
         DbExecutors.get().diskIO().execute(() -> {
             T result = command.execute();
+            deliver(callback, result);
+        });
+    }
+
+    private <T> void runDiskSafe(RepoCommand<T> command,
+                                 @Nullable ResultCallback<T> callback,
+                                 T fallbackOnError) {
+        DbExecutors.get().diskIO().execute(() -> {
+            T result;
+            try {
+                result = command.execute();
+            } catch (Throwable ignored) {
+                result = fallbackOnError;
+            }
             deliver(callback, result);
         });
     }

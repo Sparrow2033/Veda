@@ -484,6 +484,7 @@ public class GraphActivity extends AppCompatActivity implements ScrollToTop {
                 binding.tvStatus.setText(text != null ? text : "");
             }
         });
+        viewModel.getScreenState().observe(this, this::renderScreenState);
 
         viewModel.getGraphMode().observe(this, mode -> {
             currentMode = mode != null ? mode : GraphMode.GLOBAL;
@@ -738,6 +739,27 @@ public class GraphActivity extends AppCompatActivity implements ScrollToTop {
         }
         boolean show = modelLoading || !rendererReady || !payloadReady;
         binding.loadingOverlay.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    private void renderScreenState(GraphViewModel.ScreenState state) {
+        if (state == null || binding == null) {
+            return;
+        }
+
+        if (state == GraphViewModel.ScreenState.LOADING) {
+            binding.tvLoading.setText(R.string.graph_loading);
+            return;
+        }
+
+        if (state == GraphViewModel.ScreenState.EMPTY) {
+            binding.tvStatus.setText(R.string.graph_empty);
+            return;
+        }
+
+        if (state == GraphViewModel.ScreenState.ERROR) {
+            binding.tvStatus.setText(R.string.graph_error);
+            Toast.makeText(this, R.string.graph_error, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private boolean isDarkTheme() {

@@ -200,6 +200,42 @@ VedaRepository
 
 ---
 
+
+## Среда сборки (зафиксированные версии)
+
+Проект проверен и должен собираться **без ручных правок конфигурации** как через `./gradlew`, так и через Android Studio при использовании версий ниже:
+
+- **Android Studio:** Narwhal 2025.1.1+
+- **JDK (Gradle JDK):** 17
+- **Gradle Wrapper:** 9.3.1 (`gradle/wrapper/gradle-wrapper.properties`)
+- **Android Gradle Plugin (AGP):** 9.1.0 (`gradle/libs.versions.toml`)
+
+### Команды сборки (CLI)
+
+```bash
+./gradlew assembleDebug
+./gradlew test
+./gradlew lint
+```
+
+### Сборка в IDE (без ручных правок)
+
+1. Открыть проект в Android Studio.
+2. Убедиться, что `Gradle JDK = 17`.
+3. Выполнить `Sync Project with Gradle Files`.
+4. Запустить:
+   - `assembleDebug` (Build Variants / Gradle panel),
+   - `test`,
+   - `lint`.
+
+## Релизный чек-лист (smoke)
+
+Перед релизом обязательно прогнать:
+
+- `./gradlew assembleDebug`
+- `./gradlew test`
+- `./gradlew lint`
+
 ## Как запустить проект
 
 1. Склонировать репозиторий:

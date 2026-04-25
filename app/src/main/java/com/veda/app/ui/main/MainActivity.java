@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -55,13 +56,9 @@ public class MainActivity extends AppCompatActivity implements NotesAdapter.List
                 if (items == null) return;
                 firstDataLoaded = true;
             }
-
             adapter.submitList(items);
-
-            boolean empty = items == null || items.isEmpty();
-            binding.empty.setVisibility(empty ? View.VISIBLE : View.GONE);
-            binding.recycler.setVisibility(empty ? View.GONE : View.VISIBLE);
         });
+        vm.screenState().observe(this, this::renderScreenState);
 
         binding.fab.setOnClickListener(v ->
                 NavNoAnim.start(this, new Intent(this, EditNoteActivity.class))
@@ -92,5 +89,30 @@ public class MainActivity extends AppCompatActivity implements NotesAdapter.List
     public void scrollToTop() {
         if (binding == null) return;
         binding.recycler.smoothScrollToPosition(0);
+    }
+
+    private void renderScreenState(NotesListViewModel.ScreenState state) {
+        if (state == null) return;
+
+        switch (state) {
+            case LOADING:
+                binding.empty.setVisibility(View.VISIBLE);
+                binding.recycler.setVisibility(View.GONE);
+                break;
+            case CONTENT:
+                binding.empty.setVisibility(View.GONE);
+                binding.recycler.setVisibility(View.VISIBLE);
+                break;
+            case EMPTY:
+                binding.empty.setVisibility(View.VISIBLE);
+                binding.recycler.setVisibility(View.GONE);
+                break;
+            case ERROR:
+            default:
+                binding.empty.setVisibility(View.VISIBLE);
+                binding.recycler.setVisibility(View.GONE);
+                Toast.makeText(this, R.string.notes_error_generic, Toast.LENGTH_SHORT).show();
+                break;
+        }
     }
 }

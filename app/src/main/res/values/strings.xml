@@ -9,6 +9,7 @@
     <string name="notes_empty_subtitle">Нажми +, чтобы создать первую заметку и начать собирать свою систему знаний.</string>
     <string name="notes_create_note">Создать заметку</string>
     <string name="notes_subjects">Предметы</string>
+    <string name="notes_error_generic">Не удалось загрузить заметки. Попробуйте снова.</string>
 
     <string name="note_without_subject">Без предмета</string>
     <string name="note_updated_at">Обновлено: %1$s</string>
@@ -23,6 +24,7 @@
     <string name="homework_filter_week">Неделя</string>
     <string name="homework_filter_overdue">Просрочено</string>
     <string name="homework_filter_upcoming">Ближайшие</string>
+    <string name="homework_filter_done">Выполненные</string>
     <string name="homework_due_date">Дедлайн: %1$s</string>
     <string name="homework_no_deadline">Без дедлайна</string>
     <string name="homework_header_no_deadline">Без дедлайна</string>
@@ -35,6 +37,8 @@
     <string name="homework_priority_high">Высокий приоритет</string>
     <string name="homework_toast_done">Отмечено: готово</string>
     <string name="homework_toast_todo">Отмечено: нужно сделать</string>
+    <string name="homework_error_load">Не удалось загрузить задания. Попробуйте снова.</string>
+    <string name="homework_error_update">Не удалось обновить задание. Попробуйте снова.</string>
 
     <string name="settings_title">Настройки</string>
     <string name="settings_subtitle">Настрой приложение под свой ритм работы и учёбы.</string>
@@ -110,4 +114,36 @@
     <string name="demo_delete_result_message">Удалено демонстрационных заметок: %1$d</string>
 
     <string name="demo_operation_error">Не удалось выполнить операцию: %1$s</string>
+
+    <string name="state_loading">Загрузка…</string>
+
+    <string name="action_cancel">Отмена</string>
+    <string name="action_next">Далее</string>
+    <string name="action_save">Сохранить</string>
+    <string name="action_delete">Удалить</string>
+
+    <string name="subject_add">Добавить предмет</string>
+    <string name="subject_name_hint">Название предмета</string>
+    <string name="subject_add_title">Новый предмет</string>
+    <string name="subject_edit_title">Редактирование предмета</string>
+    <string name="subject_color_title">Цвет предмета</string>
+    <string name="subject_name_empty">Введите название предмета.</string>
+    <string name="subject_saved">Предмет добавлен.</string>
+    <string name="subject_updated">Предмет обновлён.</string>
+    <string name="subject_deleted">Предмет удалён.</string>
+    <string name="subject_save_error">Не удалось добавить предмет. Попробуйте снова.</string>
+    <string name="subject_update_error">Не удалось обновить предмет. Попробуйте снова.</string>
+    <string name="subject_delete_error">Не удалось удалить предмет. Попробуйте снова.</string>
+    <string name="subject_delete_title">Удалить предмет?</string>
+    <string name="subject_delete_message">После удаления связанные заметки будут перенесены в раздел «Без предмета».</string>
+
+    <string name="subjects_loading_subtitle">Пожалуйста, подождите.</string>
+    <string name="subjects_empty_title">Пока нет предметов</string>
+    <string name="subjects_empty_subtitle">Нажмите «+», чтобы добавить первый предмет.</string>
+    <string name="subjects_error_title">Не удалось загрузить предметы</string>
+    <string name="subjects_error_subtitle">Проверьте данные и повторите попытку.</string>
+
+    <string name="graph_loading">Загрузка графа…</string>
+    <string name="graph_empty">Граф пока пуст. Добавьте заметки и связи.</string>
+    <string name="graph_error">Не удалось загрузить граф. Попробуйте снова.</string>
 </resources>

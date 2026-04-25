@@ -125,7 +125,7 @@
                     android:minWidth="0dp"
                     android:paddingStart="14dp"
                     android:paddingEnd="14dp"
-                    android:text="Выполненные"
+                    android:text="@string/homework_filter_done"
                     android:textAllCaps="false"
                     android:textColor="@color/veda_color_text_primary"
                     android:textStyle="bold" />

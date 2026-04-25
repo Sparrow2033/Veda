@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.veda.app.R;
 import com.veda.app.data.entity.HomeworkEntity;
@@ -20,6 +21,12 @@ import java.util.Date;
 import java.util.List;
 
 public final class HomeworkListViewModel extends AndroidViewModel {
+    public enum ScreenState {
+        LOADING,
+        CONTENT,
+        EMPTY,
+        ERROR
+    }
 
     public enum Filter {
         ALL,
@@ -36,6 +43,8 @@ public final class HomeworkListViewModel extends AndroidViewModel {
     private final VedaRepository repo;
     private final LiveData<List<HomeworkEntity>> source;
     private final MediatorLiveData<List<HomeworkRowItem>> rows = new MediatorLiveData<>();
+    private final MutableLiveData<ScreenState> screenState = new MutableLiveData<>(ScreenState.LOADING);
+    private final MutableLiveData<Integer> operationMessageRes = new MutableLiveData<>(0);
 
     private Filter currentFilter = Filter.ALL;
 
@@ -45,7 +54,16 @@ public final class HomeworkListViewModel extends AndroidViewModel {
         repo = VedaRepository.get(application);
         source = repo.observeHomeworkAll();
 
-        rows.addSource(source, list -> rows.setValue(buildRows(list)));
+        rows.addSource(source, list -> {
+            try {
+                List<HomeworkRowItem> builtRows = buildRows(list);
+                rows.setValue(builtRows);
+                screenState.setValue(builtRows.isEmpty() ? ScreenState.EMPTY : ScreenState.CONTENT);
+            } catch (Throwable ignored) {
+                rows.setValue(Collections.emptyList());
+                screenState.setValue(ScreenState.ERROR);
+            }
+        });
     }
 
     @NonNull
@@ -55,7 +73,14 @@ public final class HomeworkListViewModel extends AndroidViewModel {
 
     public void setFilter(@NonNull Filter filter) {
         currentFilter = filter;
-        rows.setValue(buildRows(source.getValue()));
+        try {
+            List<HomeworkRowItem> builtRows = buildRows(source.getValue());
+            rows.setValue(builtRows);
+            screenState.setValue(builtRows.isEmpty() ? ScreenState.EMPTY : ScreenState.CONTENT);
+        } catch (Throwable ignored) {
+            rows.setValue(Collections.emptyList());
+            screenState.setValue(ScreenState.ERROR);
+        }
     }
 
     public void toggleDone(@NonNull HomeworkEntity item) {
@@ -75,12 +100,28 @@ public final class HomeworkListViewModel extends AndroidViewModel {
                 System.currentTimeMillis()
         );
 
-        repo.updateHomework(updated);
+        repo.updateHomework(updated, success -> {
+            boolean goesDone = item.status != HomeworkEntity.STATUS_DONE;
+            if (success != null && success) {
+                operationMessageRes.setValue(goesDone ? R.string.homework_toast_done : R.string.homework_toast_todo);
+            } else {
+                operationMessageRes.setValue(R.string.homework_error_update);
+            }
+        });
     }
 
-    public int toggledStateToastRes(@NonNull HomeworkEntity item) {
-        boolean goesDone = item.status != HomeworkEntity.STATUS_DONE;
-        return goesDone ? R.string.homework_toast_done : R.string.homework_toast_todo;
+    @NonNull
+    public LiveData<ScreenState> screenState() {
+        return screenState;
+    }
+
+    @NonNull
+    public LiveData<Integer> operationMessageRes() {
+        return operationMessageRes;
+    }
+
+    public void consumeOperationMessage() {
+        operationMessageRes.setValue(0);
     }
 
     private List<HomeworkRowItem> buildRows(List<HomeworkEntity> sourceList) {

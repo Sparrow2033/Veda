@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.veda.app.data.entity.NoteListItem;
 import com.veda.app.data.repo.VedaRepository;
@@ -18,17 +19,38 @@ import java.util.List;
 
 public class NotesListViewModel extends AndroidViewModel {
 
+    public enum ScreenState {
+        LOADING,
+        CONTENT,
+        EMPTY,
+        ERROR
+    }
+
     private final MediatorLiveData<List<NoteListItem>> notes = new MediatorLiveData<>();
+    private final MutableLiveData<ScreenState> screenState = new MutableLiveData<>(ScreenState.LOADING);
 
     public NotesListViewModel(@NonNull Application application) {
         super(application);
 
         VedaRepository repo = VedaRepository.get(application);
-        notes.addSource(repo.observeNotesList(), items -> notes.setValue(sortNotes(items)));
+        notes.addSource(repo.observeNotesList(), items -> {
+            try {
+                List<NoteListItem> sorted = sortNotes(items);
+                notes.setValue(sorted);
+                screenState.setValue(sorted.isEmpty() ? ScreenState.EMPTY : ScreenState.CONTENT);
+            } catch (Throwable ignored) {
+                notes.setValue(Collections.emptyList());
+                screenState.setValue(ScreenState.ERROR);
+            }
+        });
     }
 
     public LiveData<List<NoteListItem>> notes() {
         return notes;
+    }
+
+    public LiveData<ScreenState> screenState() {
+        return screenState;
     }
 
     private List<NoteListItem> sortNotes(List<NoteListItem> items) {

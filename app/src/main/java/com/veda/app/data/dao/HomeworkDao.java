@@ -44,10 +44,24 @@ public interface HomeworkDao {
 
     @Query(
             "SELECT * FROM homework " +
+                    "WHERE dueDate > 0 AND dueDate >= :startInclusive AND dueDate < :endExclusive " +
+                    "ORDER BY dueDate ASC, updatedAt DESC"
+    )
+    List<HomeworkEntity> getByDueDateRangeSync(long startInclusive, long endExclusive);
+
+    @Query(
+            "SELECT * FROM homework " +
                     "WHERE dueDate > 0 AND dueDate < :now AND status IN (0, 1) " +
                     "ORDER BY dueDate ASC, updatedAt DESC"
     )
     LiveData<List<HomeworkEntity>> observeOverdue(long now);
+
+    @Query(
+            "SELECT * FROM homework " +
+                    "WHERE dueDate > 0 AND dueDate < :now AND status IN (0, 1) " +
+                    "ORDER BY dueDate ASC, updatedAt DESC"
+    )
+    List<HomeworkEntity> getOverdueSync(long now);
 
     @Query(
             "SELECT * FROM homework " +
@@ -56,4 +70,12 @@ public interface HomeworkDao {
                     "LIMIT :limit"
     )
     LiveData<List<HomeworkEntity>> observeNextUpcoming(long now, int limit);
+
+    @Query(
+            "SELECT * FROM homework " +
+                    "WHERE dueDate > 0 AND dueDate >= :now AND status IN (0, 1) " +
+                    "ORDER BY dueDate ASC, updatedAt DESC " +
+                    "LIMIT :limit"
+    )
+    List<HomeworkEntity> getNextUpcomingSync(long now, int limit);
 }

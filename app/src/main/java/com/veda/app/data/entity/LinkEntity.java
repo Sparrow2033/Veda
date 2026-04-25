@@ -8,7 +8,11 @@ import androidx.room.PrimaryKey;
 
 @Entity(
         tableName = "links",
-        indices = {@Index("fromNoteId"), @Index("toNoteId")},
+        indices = {
+                @Index("fromNoteId"),
+                @Index("toNoteId"),
+                @Index(value = {"fromNoteId", "toNoteId"}, unique = true)
+        },
         foreignKeys = {
                 @ForeignKey(
                         entity = NoteEntity.class,

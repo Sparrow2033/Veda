@@ -31,6 +31,9 @@ public interface NoteDao {
     @Query("SELECT * FROM notes WHERE id = :noteId LIMIT 1")
     LiveData<NoteEntity> observeById(long noteId);
 
+    @Query("SELECT * FROM notes WHERE id = :noteId LIMIT 1")
+    NoteEntity getByIdSync(long noteId);
+
     @Query(
             "SELECT " +
                     "n.id AS id, " +

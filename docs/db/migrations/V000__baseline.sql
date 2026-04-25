@@ -1,0 +1,3 @@
+-- Baseline migration for MVP.
+-- Intentionally empty: this file marks the current production schema as a starting point
+-- for explicit, versioned SQL migrations.

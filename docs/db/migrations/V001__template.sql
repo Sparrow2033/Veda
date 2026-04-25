@@ -1,0 +1,8 @@
+-- Template for the next migration.
+-- Copy this file and increment version when schema changes are introduced.
+--
+-- Example:
+-- ALTER TABLE notes ADD COLUMN archived INTEGER NOT NULL DEFAULT 0;
+-- CREATE INDEX IF NOT EXISTS index_notes_archived_updatedAt ON notes(archived, updatedAt);
+--
+-- Keep migration idempotent when possible and document data backfill steps.

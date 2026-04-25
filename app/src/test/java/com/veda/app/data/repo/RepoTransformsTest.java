@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class RepoTransformsTest {
@@ -13,7 +14,7 @@ public class RepoTransformsTest {
     public void sanitizeToNoteIds_removesNullInvalidSelfAndDuplicates() {
         assertIterableEquals(
                 List.of(2L, 3L),
-                RepoTransforms.sanitizeToNoteIds(1L, List.of(null, -1L, 0L, 1L, 2L, 2L, 3L))
+                RepoTransforms.sanitizeToNoteIds(1L, Arrays.asList(null, -1L, 0L, 1L, 2L, 2L, 3L))
         );
     }
 

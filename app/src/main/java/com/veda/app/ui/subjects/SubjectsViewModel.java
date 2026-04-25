@@ -24,7 +24,7 @@ public class SubjectsViewModel extends AndroidViewModel {
         return repo.observeSubjects();
     }
 
-    public void addSubject(String name, int color, int sortOrder, VedaRepository.IdCallback cb) {
+    public void addSubject(String name, int color, int sortOrder, VedaRepository.ResultCallback<Long> cb) {
         repo.insertSubject(new SubjectEntity(name, color, sortOrder), cb);
     }
 

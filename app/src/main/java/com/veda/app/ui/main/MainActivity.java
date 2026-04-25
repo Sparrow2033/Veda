@@ -11,7 +11,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.veda.app.R;
-import com.veda.app.data.entity.NoteListItem;
 import com.veda.app.databinding.ActivityMainBinding;
 import com.veda.app.ui.edit.EditNoteActivity;
 import com.veda.app.ui.nav.BottomNav;
@@ -23,10 +22,6 @@ import com.veda.app.ui.view.NoteViewActivity;
 import com.veda.app.utils.AppPrefs;
 import com.veda.app.utils.UiTextSize;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NotesAdapter.Listener, ScrollToTop {
 
@@ -55,16 +50,15 @@ public class MainActivity extends AppCompatActivity implements NotesAdapter.List
         binding.recycler.setVisibility(View.VISIBLE);
 
         NotesListViewModel vm = new ViewModelProvider(this).get(NotesListViewModel.class);
-        vm.notes.observe(this, items -> {
+        vm.notes().observe(this, items -> {
             if (!firstDataLoaded) {
                 if (items == null) return;
                 firstDataLoaded = true;
             }
 
-            List<NoteListItem> sorted = sortNotes(items);
-            adapter.submitList(sorted);
+            adapter.submitList(items);
 
-            boolean empty = sorted == null || sorted.isEmpty();
+            boolean empty = items == null || items.isEmpty();
             binding.empty.setVisibility(empty ? View.VISIBLE : View.GONE);
             binding.recycler.setVisibility(empty ? View.GONE : View.VISIBLE);
         });
@@ -72,28 +66,6 @@ public class MainActivity extends AppCompatActivity implements NotesAdapter.List
         binding.fab.setOnClickListener(v ->
                 NavNoAnim.start(this, new Intent(this, EditNoteActivity.class))
         );
-    }
-
-    private List<NoteListItem> sortNotes(List<NoteListItem> items) {
-        if (items == null) return Collections.emptyList();
-
-        List<NoteListItem> list = new ArrayList<>(items);
-        AppPrefs.NotesSort sort = AppPrefs.getNotesSort(this);
-
-        if (sort == AppPrefs.NotesSort.ALPHABETICAL) {
-            list.sort((a, b) -> {
-                String ta = a.title == null ? "" : a.title.trim();
-                String tb = b.title == null ? "" : b.title.trim();
-                return ta.compareToIgnoreCase(tb);
-            });
-            return list;
-        }
-
-        Comparator<NoteListItem> byUpdated = (a, b) -> Long.compare(a.updatedAt, b.updatedAt);
-        list.sort(byUpdated);
-
-        if (sort == AppPrefs.NotesSort.NEW_FIRST) Collections.reverse(list);
-        return list;
     }
 
     @Override

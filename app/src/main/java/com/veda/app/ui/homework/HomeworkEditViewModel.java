@@ -42,7 +42,7 @@ public final class HomeworkEditViewModel extends AndroidViewModel {
                        long dueDate,
                        int status,
                        int priority,
-                       VedaRepository.IdCallback callback) {
+                       VedaRepository.ResultCallback<Long> callback) {
         long now = System.currentTimeMillis();
         HomeworkEntity entity = HomeworkEntity.newItem(
                 subjectId,

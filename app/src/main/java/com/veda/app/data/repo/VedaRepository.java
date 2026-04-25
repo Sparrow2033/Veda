@@ -2,6 +2,7 @@ package com.veda.app.data.repo;
 
 import android.content.Context;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 
 import com.veda.app.data.dao.HomeworkDao;
@@ -25,9 +26,19 @@ import java.util.Set;
 
 public final class VedaRepository {
 
-    public interface IdCallback { void onResult(long id); }
-    public interface NotesCallback { void onResult(List<NoteListItem> notes); }
-    public interface GraphCallback { void onResult(List<GraphNodeItem> nodes, List<LinkEntity> edges); }
+    public interface ResultCallback<T> {
+        void onResult(T result);
+    }
+
+    public static final class GraphData {
+        public final List<GraphNodeItem> nodes;
+        public final List<LinkEntity> edges;
+
+        public GraphData(List<GraphNodeItem> nodes, List<LinkEntity> edges) {
+            this.nodes = nodes;
+            this.edges = edges;
+        }
+    }
 
     private static volatile VedaRepository INSTANCE;
 
@@ -60,26 +71,27 @@ public final class VedaRepository {
         return subjectDao.observeAll();
     }
 
-    public void insertSubject(SubjectEntity subject, IdCallback callback) {
-        DbExecutors.get().diskIO().execute(() -> {
-            long id = subjectDao.insert(subject);
-            if (callback != null) {
-                DbExecutors.get().mainThread().execute(() -> callback.onResult(id));
-            }
-        });
+    public void insertSubject(SubjectEntity subject, @Nullable ResultCallback<Long> callback) {
+        runDisk(() -> subjectDao.insert(subject), callback);
     }
 
     public void updateSubject(SubjectEntity subject) {
-        DbExecutors.get().diskIO().execute(() -> subjectDao.update(subject));
+        runDisk(() -> {
+            subjectDao.update(subject);
+            return null;
+        }, null);
     }
 
     public void deleteSubject(SubjectEntity subject) {
-        DbExecutors.get().diskIO().execute(() -> subjectDao.delete(subject));
+        runDisk(() -> {
+            subjectDao.delete(subject);
+            return null;
+        }, null);
     }
 
     public void ensureDefaultSubjects() {
-        DbExecutors.get().diskIO().execute(() -> {
-            if (subjectDao.countSync() > 0) return;
+        runDisk(() -> {
+            if (subjectDao.countSync() > 0) return null;
 
             List<SubjectEntity> seed = new ArrayList<>();
             seed.add(new SubjectEntity("Математика", 0xFF2166F3, 1));
@@ -92,7 +104,8 @@ public final class VedaRepository {
             seed.add(new SubjectEntity("Информатика", 0xFF263238, 8));
 
             subjectDao.insertAll(seed);
-        });
+            return null;
+        }, null);
     }
 
     public LiveData<List<NoteListItem>> observeNotesList() {
@@ -108,35 +121,36 @@ public final class VedaRepository {
     }
 
     public void deleteNoteById(long noteId) {
-        DbExecutors.get().diskIO().execute(() -> noteDao.deleteById(noteId));
+        runDisk(() -> {
+            noteDao.deleteById(noteId);
+            return null;
+        }, null);
     }
 
-    public void loadNotesForPicker(long excludeId, NotesCallback callback) {
-        DbExecutors.get().diskIO().execute(() -> {
-            List<NoteListItem> list = noteDao.getPickListSync(excludeId);
-            if (callback != null) DbExecutors.get().mainThread().execute(() -> callback.onResult(list));
-        });
+    public void loadNotesForPicker(long excludeId, @Nullable ResultCallback<List<NoteListItem>> callback) {
+        runDisk(() -> noteDao.getPickListSync(excludeId), callback);
     }
 
-    public void insertNoteWithLinks(NoteEntity note, List<Long> toNoteIds, IdCallback callback) {
-        DbExecutors.get().diskIO().execute(() -> {
+    public void insertNoteWithLinks(NoteEntity note, List<Long> toNoteIds, @Nullable ResultCallback<Long> callback) {
+        runDisk(() -> {
             final long[] out = new long[]{-1};
             db.runInTransaction(() -> {
                 long newId = noteDao.insert(note);
                 out[0] = newId;
                 replaceOutgoingLinksTx(newId, toNoteIds);
             });
-            if (callback != null) DbExecutors.get().mainThread().execute(() -> callback.onResult(out[0]));
-        });
+            return out[0];
+        }, callback);
     }
 
     public void updateNoteWithLinks(NoteEntity note, List<Long> toNoteIds) {
-        DbExecutors.get().diskIO().execute(() ->
-                db.runInTransaction(() -> {
-                    noteDao.update(note);
-                    replaceOutgoingLinksTx(note.id, toNoteIds);
-                })
-        );
+        runDisk(() -> {
+            db.runInTransaction(() -> {
+                noteDao.update(note);
+                replaceOutgoingLinksTx(note.id, toNoteIds);
+            });
+            return null;
+        }, null);
     }
 
     private void replaceOutgoingLinksTx(long fromNoteId, List<Long> toNoteIds) {
@@ -158,12 +172,12 @@ public final class VedaRepository {
         linkDao.insertAll(links);
     }
 
-    public void loadGraph(GraphCallback callback) {
-        DbExecutors.get().diskIO().execute(() -> {
+    public void loadGraph(@Nullable ResultCallback<GraphData> callback) {
+        runDisk(() -> {
             List<GraphNodeItem> nodes = noteDao.getGraphNodesSync();
             List<LinkEntity> edges = linkDao.getAllSync();
-            if (callback != null) DbExecutors.get().mainThread().execute(() -> callback.onResult(nodes, edges));
-        });
+            return new GraphData(nodes, edges);
+        }, callback);
     }
 
     public LiveData<List<HomeworkEntity>> observeHomeworkAll() {
@@ -186,24 +200,46 @@ public final class VedaRepository {
         return homeworkDao.observeNextUpcoming(now, limit);
     }
 
-    public void insertHomework(HomeworkEntity homework, IdCallback callback) {
-        DbExecutors.get().diskIO().execute(() -> {
-            long id = homeworkDao.insert(homework);
-            if (callback != null) {
-                DbExecutors.get().mainThread().execute(() -> callback.onResult(id));
-            }
-        });
+    public void insertHomework(HomeworkEntity homework, @Nullable ResultCallback<Long> callback) {
+        runDisk(() -> homeworkDao.insert(homework), callback);
     }
 
     public void updateHomework(HomeworkEntity homework) {
-        DbExecutors.get().diskIO().execute(() -> homeworkDao.update(homework));
+        runDisk(() -> {
+            homeworkDao.update(homework);
+            return null;
+        }, null);
     }
 
     public void deleteHomework(HomeworkEntity homework) {
-        DbExecutors.get().diskIO().execute(() -> homeworkDao.delete(homework));
+        runDisk(() -> {
+            homeworkDao.delete(homework);
+            return null;
+        }, null);
     }
 
     public void deleteHomeworkById(long id) {
-        DbExecutors.get().diskIO().execute(() -> homeworkDao.deleteById(id));
+        runDisk(() -> {
+            homeworkDao.deleteById(id);
+            return null;
+        }, null);
+    }
+
+    private <T> void runDisk(RepoCommand<T> command, @Nullable ResultCallback<T> callback) {
+        DbExecutors.get().diskIO().execute(() -> {
+            T result = command.execute();
+            deliver(callback, result);
+        });
+    }
+
+    private <T> void deliver(@Nullable ResultCallback<T> callback, T result) {
+        if (callback == null) {
+            return;
+        }
+        DbExecutors.get().mainThread().execute(() -> callback.onResult(result));
+    }
+
+    private interface RepoCommand<T> {
+        T execute();
     }
 }

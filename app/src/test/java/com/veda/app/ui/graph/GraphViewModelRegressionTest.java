@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.List;
@@ -38,8 +39,13 @@ public class GraphViewModelRegressionTest {
         List<Object> edges = (List<Object>) derive.invoke(vm, notes, allowed);
         Set<String> normalized = new HashSet<>();
         for (Object edge : edges) {
-            long from = edge.getClass().getDeclaredField("fromId").getLong(edge);
-            long to = edge.getClass().getDeclaredField("toId").getLong(edge);
+            Field fromField = edge.getClass().getDeclaredField("fromId");
+            fromField.setAccessible(true);
+            long from = fromField.getLong(edge);
+
+            Field toField = edge.getClass().getDeclaredField("toId");
+            toField.setAccessible(true);
+            long to = toField.getLong(edge);
             normalized.add(from + "->" + to);
         }
 

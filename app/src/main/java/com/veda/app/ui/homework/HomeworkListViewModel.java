@@ -1,7 +1,6 @@
 package com.veda.app.ui.homework;
 
 import android.app.Application;
-import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -11,12 +10,9 @@ import androidx.lifecycle.MediatorLiveData;
 import com.veda.app.data.entity.HomeworkEntity;
 import com.veda.app.data.repo.VedaRepository;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 public final class HomeworkListViewModel extends AndroidViewModel {
 
@@ -41,7 +37,7 @@ public final class HomeworkListViewModel extends AndroidViewModel {
         super(application);
 
         VedaRepository repo = VedaRepository.get(application);
-        source = resolveHomeworkListSource(repo, application);
+        source = repo.observeHomeworkAll();
 
         items.addSource(source, list -> items.setValue(applyFilter(list, currentFilter)));
     }
@@ -126,90 +122,5 @@ public final class HomeworkListViewModel extends AndroidViewModel {
         c.set(java.util.Calendar.SECOND, 0);
         c.set(java.util.Calendar.MILLISECOND, 0);
         return c.getTimeInMillis();
-    }
-
-    @NonNull
-    @SuppressWarnings("unchecked")
-    private static LiveData<List<HomeworkEntity>> resolveHomeworkListSource(@NonNull VedaRepository repo,
-                                                                            @NonNull Application application) {
-        Method exact = findHomeworkListMethod(repo.getClass());
-        if (exact == null) {
-            throw new IllegalStateException("Не найден метод репозитория, возвращающий LiveData<List<HomeworkEntity>>");
-        }
-
-        try {
-            Object result = invokeRepoMethod(repo, exact, application);
-            if (!(result instanceof LiveData)) {
-                throw new IllegalStateException("Метод списка ДЗ не вернул LiveData");
-            }
-            return (LiveData<List<HomeworkEntity>>) result;
-        } catch (Exception e) {
-            throw new IllegalStateException("Не удалось подключить источник списка ДЗ: " + e.getMessage(), e);
-        }
-    }
-
-    private static Method findHomeworkListMethod(@NonNull Class<?> repoClass) {
-        Method fallback = null;
-
-        for (Method method : repoClass.getMethods()) {
-            if (!LiveData.class.isAssignableFrom(method.getReturnType())) continue;
-
-            String name = method.getName().toLowerCase(Locale.ROOT);
-            if (!name.contains("homework")) continue;
-
-            String generic = genericName(method.getGenericReturnType());
-            boolean isHomeworkList = generic.contains("java.util.list")
-                    && generic.contains("homeworkentity");
-            if (!isHomeworkList) continue;
-
-            if (supportsInvocation(method)) {
-                if (name.contains("observe") || name.contains("all") || name.contains("list")) {
-                    return method;
-                }
-                if (fallback == null) {
-                    fallback = method;
-                }
-            }
-        }
-
-        return fallback;
-    }
-
-    private static boolean supportsInvocation(@NonNull Method method) {
-        Class<?>[] params = method.getParameterTypes();
-
-        if (params.length == 0) return true;
-
-        if (params.length == 1) {
-            Class<?> p = params[0];
-            return p == Application.class
-                    || Context.class.isAssignableFrom(p);
-        }
-
-        return false;
-    }
-
-    private static Object invokeRepoMethod(@NonNull VedaRepository repo,
-                                           @NonNull Method method,
-                                           @NonNull Application application) throws Exception {
-        Class<?>[] params = method.getParameterTypes();
-
-        if (params.length == 0) {
-            return method.invoke(repo);
-        }
-
-        if (params.length == 1) {
-            Class<?> p = params[0];
-            if (p == Application.class || Context.class.isAssignableFrom(p)) {
-                return method.invoke(repo, application);
-            }
-        }
-
-        throw new IllegalStateException("Неподдерживаемая сигнатура метода: " + method.getName());
-    }
-
-    @NonNull
-    private static String genericName(Type type) {
-        return type == null ? "" : String.valueOf(type).toLowerCase(Locale.ROOT);
     }
 }

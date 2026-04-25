@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.AsyncListDiffer;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.veda.app.R;
@@ -19,9 +21,9 @@ import com.veda.app.data.entity.SubjectEntity;
 import com.veda.app.databinding.ItemHomeworkBinding;
 import com.veda.app.databinding.ItemHomeworkHeaderBinding;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public final class HomeworkAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -30,9 +32,41 @@ public final class HomeworkAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         void onItemLongClick(@NonNull HomeworkEntity item);
     }
 
+    private static final DiffUtil.ItemCallback<HomeworkRowItem> DIFF = new DiffUtil.ItemCallback<>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull HomeworkRowItem oldItem, @NonNull HomeworkRowItem newItem) {
+            return oldItem.type == newItem.type && oldItem.stableId == newItem.stableId;
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull HomeworkRowItem oldItem, @NonNull HomeworkRowItem newItem) {
+            if (oldItem.type != newItem.type) return false;
+
+            if (oldItem.type == HomeworkRowItem.TYPE_HEADER) {
+                return Objects.equals(oldItem.headerText, newItem.headerText);
+            }
+
+            return taskEquals(oldItem.task, newItem.task);
+        }
+
+        private boolean taskEquals(@Nullable HomeworkEntity oldTask, @Nullable HomeworkEntity newTask) {
+            if (oldTask == newTask) return true;
+            if (oldTask == null || newTask == null) return false;
+
+            return oldTask.id == newTask.id
+                    && oldTask.subjectId == newTask.subjectId
+                    && oldTask.dueDate == newTask.dueDate
+                    && oldTask.status == newTask.status
+                    && oldTask.priority == newTask.priority
+                    && oldTask.updatedAt == newTask.updatedAt
+                    && Objects.equals(oldTask.title, newTask.title)
+                    && Objects.equals(oldTask.description, newTask.description);
+        }
+    };
+
     private final Listener listener;
-    private final List<HomeworkRowItem> items = new ArrayList<>();
     private final SubjectIndex subjectIndex = new SubjectIndex();
+    private final AsyncListDiffer<HomeworkRowItem> differ = new AsyncListDiffer<>(this, DIFF);
 
     public HomeworkAdapter(@NonNull Listener listener) {
         this.listener = listener;
@@ -40,24 +74,22 @@ public final class HomeworkAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     }
 
     public void submit(@NonNull List<HomeworkRowItem> newItems) {
-        items.clear();
-        items.addAll(newItems);
-        notifyDataSetChanged();
+        differ.submitList(newItems);
     }
 
     public void setSubjects(@Nullable List<SubjectEntity> subjects) {
         subjectIndex.setSubjects(subjects);
-        notifyDataSetChanged();
+        notifyItemRangeChanged(0, getItemCount());
     }
 
     @Override
     public int getItemViewType(int position) {
-        return items.get(position).type;
+        return differ.getCurrentList().get(position).type;
     }
 
     @Override
     public long getItemId(int position) {
-        return items.get(position).stableId;
+        return differ.getCurrentList().get(position).stableId;
     }
 
     @NonNull
@@ -74,7 +106,7 @@ public final class HomeworkAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        HomeworkRowItem row = items.get(position);
+        HomeworkRowItem row = differ.getCurrentList().get(position);
         if (holder instanceof HeaderVH) {
             ((HeaderVH) holder).bind(row);
         } else if (holder instanceof TaskVH) {
@@ -84,7 +116,7 @@ public final class HomeworkAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return differ.getCurrentList().size();
     }
 
     static final class HeaderVH extends RecyclerView.ViewHolder {

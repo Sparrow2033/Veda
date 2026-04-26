@@ -1,5 +1,8 @@
+import org.gradle.api.plugins.quality.Checkstyle
+
 plugins {
     alias(libs.plugins.android.application)
+    checkstyle
 }
 
 android {
@@ -40,6 +43,24 @@ android {
     testOptions {
         unitTests.isIncludeAndroidResources = true
     }
+}
+
+checkstyle {
+    toolVersion = "10.17.0"
+    configFile = file("$projectDir/config/checkstyle/checkstyle.xml")
+    isIgnoreFailures = false
+}
+
+tasks.register<Checkstyle>("checkstyle") {
+    group = "verification"
+    description = "Runs Checkstyle on Java source sets."
+    source("src/main/java", "src/test/java", "src/androidTest/java")
+    include("**/*.java")
+    classpath = files()
+}
+
+tasks.named("check") {
+    dependsOn("checkstyle")
 }
 
 dependencies {

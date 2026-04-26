@@ -239,6 +239,19 @@ VedaRepository
    - `test`,
    - `lint`.
 
+## CI и правила Pull Request
+
+В репозитории настроен обязательный CI workflow `merge-gate`, который запускает:
+
+- `assembleDebug`;
+- `test`;
+- `lint`;
+- `checkstyle` (статический анализ Java).
+
+Шаблон PR находится в `.github/pull_request_template.md`.
+
+Правила merge и инструкция по включению branch protection описаны в `docs/process/pull-request-policy.md`.
+
 ## Релизный чек-лист (smoke)
 
 Перед релизом обязательно прогнать:

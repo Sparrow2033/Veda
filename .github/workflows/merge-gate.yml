@@ -5,9 +5,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  must-pass:
+  required-ci:
+    name: required-ci
     runs-on: macos-latest
-    timeout-minutes: 45
+    timeout-minutes: 50
 
     steps:
       - name: Checkout
@@ -18,6 +19,7 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+          cache: gradle
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
@@ -25,8 +27,14 @@ jobs:
       - name: Grant gradlew execute permission
         run: chmod +x gradlew
 
-      - name: Build debug APK
-        run: ./gradlew :app:assembleDebug
+      - name: Assemble Debug
+        run: ./gradlew :app:assembleDebug --stacktrace
 
-      - name: Run unit tests
-        run: ./gradlew :app:testDebugUnitTest
+      - name: Unit Tests
+        run: ./gradlew :app:testDebugUnitTest --stacktrace
+
+      - name: Android Lint
+        run: ./gradlew :app:lintDebug --stacktrace
+
+      - name: Checkstyle
+        run: ./gradlew :app:checkstyle --stacktrace

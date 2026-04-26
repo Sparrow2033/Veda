@@ -6,7 +6,6 @@ on:
 jobs:
   android-smoke:
     name: android-smoke (manual)
-    continue-on-error: true # Emulator infra is flaky in CI; keep this as best-effort signal.
     runs-on: macos-latest
     timeout-minutes: 12
 
@@ -26,8 +25,7 @@ jobs:
       - name: Grant gradlew execute permission
         run: chmod +x gradlew
 
-      - name: Run smoke instrumentation tests (non-blocking)
-        continue-on-error: true
+      - name: Run smoke instrumentation tests
         uses: ReactiveCircus/android-emulator-runner@v2
         with:
           api-level: 30
@@ -38,8 +36,6 @@ jobs:
           emulator-boot-timeout: 300
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           script: |
-            adb kill-server
-            adb start-server
             adb devices -l
             ./gradlew :app:connectedDebugAndroidTest \
               -Pandroid.testInstrumentationRunnerArguments.class=com.veda.app.ui.SmokeInstrumentationTest

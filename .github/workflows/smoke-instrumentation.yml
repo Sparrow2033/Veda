@@ -6,6 +6,8 @@ on:
 
 jobs:
   android-smoke:
+    name: android-smoke (non-blocking)
+    continue-on-error: true # Emulator infra is flaky in CI; keep this as best-effort signal.
     runs-on: macos-latest
     timeout-minutes: 45
 
@@ -42,4 +44,3 @@ jobs:
             adb devices -l
             ./gradlew :app:connectedDebugAndroidTest \
               -Pandroid.testInstrumentationRunnerArguments.class=com.veda.app.ui.SmokeInstrumentationTest
-

@@ -27,6 +27,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
+import com.veda.app.R;
 import com.veda.app.databinding.ActivityGraphBinding;
 import com.veda.app.ui.homework.HomeworkListActivity;
 import com.veda.app.ui.main.MainActivity;

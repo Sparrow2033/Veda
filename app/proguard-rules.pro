@@ -22,6 +22,14 @@
     @android.webkit.JavascriptInterface <methods>;
 }
 
+# GraphViewModel relies on reflection to resolve repository/database entry points by
+# exact class/member names (Class.forName + method/field name heuristics).
+# Preserve these names in release builds so minification cannot break graph loading.
+-keepnames class com.veda.app.data.repo.VedaRepository
+-keep class com.veda.app.data.repo.VedaRepository { *; }
+-keep class com.veda.app.data.db.AppDatabase { *; }
+-keep class com.veda.app.data.dao.** { *; }
+
 # Keep Parcelable creators if introduced by future MVP patches.
 -keepclassmembers class * implements android.os.Parcelable {
     public static final android.os.Parcelable$Creator CREATOR;

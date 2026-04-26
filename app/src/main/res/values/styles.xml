@@ -40,11 +40,6 @@
         <item name="android:textColor">@color/veda_color_text_muted</item>
     </style>
 
-    <style name="TextAppearance.Veda.Caption" parent="TextAppearance.AppCompat.Caption">
-        <item name="android:textSize">@dimen/veda_text_caption</item>
-        <item name="android:textColor">@color/veda_color_text_muted</item>
-    </style>
-
     <style name="Widget.Veda.Toolbar" parent="">
         <item name="android:background">@drawable/bg_top_bar</item>
         <item name="android:minHeight">@dimen/veda_toolbar_height</item>
@@ -59,14 +54,6 @@
         <item name="strokeColor">@color/veda_color_stroke</item>
         <item name="strokeWidth">@dimen/veda_stroke_regular</item>
         <item name="rippleColor">@color/veda_color_ripple</item>
-    </style>
-
-    <style name="Widget.Veda.Card.Subtle" parent="Widget.Veda.Card">
-        <item name="cardBackgroundColor">@color/veda_color_surface</item>
-        <item name="cardCornerRadius">@dimen/veda_radius_md</item>
-        <item name="cardElevation">@dimen/veda_elevation_none</item>
-        <item name="strokeColor">@color/veda_color_divider</item>
-        <item name="strokeWidth">@dimen/veda_stroke_hairline</item>
     </style>
 
     <style name="Widget.Veda.BottomNavigation" parent="Widget.Design.BottomNavigationView">

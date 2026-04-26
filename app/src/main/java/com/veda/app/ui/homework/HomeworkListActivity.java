@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -171,7 +172,9 @@ public final class HomeworkListActivity extends AppCompatActivity implements Scr
 
     private void setFilterButtonState(@NonNull android.widget.Button button, boolean active) {
         button.setSelected(active);
-        button.setTextColor(getColor(active ? android.R.color.white : android.R.color.black));
+        button.setTextColor(ContextCompat.getColor(this, active
+                ? R.color.veda_color_on_accent
+                : R.color.veda_color_text_primary));
         button.setBackgroundResource(active
                 ? R.drawable.bg_homework_filter_active
                 : R.drawable.bg_homework_filter_inactive);

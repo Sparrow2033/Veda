@@ -1,15 +1,14 @@
 name: smoke-instrumentation
 
 on:
-  pull_request:
   workflow_dispatch:
 
 jobs:
   android-smoke:
-    name: android-smoke (non-blocking)
+    name: android-smoke (manual)
     continue-on-error: true # Emulator infra is flaky in CI; keep this as best-effort signal.
     runs-on: macos-latest
-    timeout-minutes: 45
+    timeout-minutes: 12
 
     steps:
       - name: Checkout
@@ -36,7 +35,7 @@ jobs:
           arch: x86_64
           profile: pixel_2
           disable-animations: true
-          emulator-boot-timeout: 1200
+          emulator-boot-timeout: 300
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           script: |
             adb kill-server

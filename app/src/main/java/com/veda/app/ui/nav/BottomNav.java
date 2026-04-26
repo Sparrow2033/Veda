@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.bottomnavigation.LabelVisibilityMode;
+import com.google.android.material.navigation.NavigationBarView;
 import com.veda.app.R;
 import com.veda.app.ui.graph.GraphActivity;
 import com.veda.app.ui.homework.HomeworkListActivity;
@@ -25,7 +25,7 @@ public final class BottomNav {
                             int selectedItemId) {
 
         nav.getMenu().setGroupCheckable(0, true, true);
-        nav.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_LABELED);
+        nav.setLabelVisibilityMode(NavigationBarView.LABEL_VISIBILITY_LABELED);
         nav.setItemHorizontalTranslationEnabled(false);
 
         nav.setOnItemSelectedListener(item -> {

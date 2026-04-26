@@ -804,7 +804,7 @@ public class GraphViewModel extends AndroidViewModel {
         String name = method.getName().toLowerCase(Locale.ROOT);
         Type genericType = method.getGenericReturnType();
         String signature = genericType != null
-                ? genericType.getTypeName().toLowerCase(Locale.ROOT)
+                ? String.valueOf(genericType).toLowerCase(Locale.ROOT)
                 : method.getReturnType().getName().toLowerCase(Locale.ROOT);
 
         int score = 0;

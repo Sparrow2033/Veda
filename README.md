@@ -211,6 +211,13 @@ VedaRepository
 
 ---
 
+## Демонстрационные материалы
+
+- [Видео демонстрации приложения](docs/assets/veda-demo-video.mp4)
+- [Презентация Veda Samsung](docs/assets/veda-samsung-presentation.pptx)
+
+---
+
 
 ## Среда сборки (зафиксированные версии)
 

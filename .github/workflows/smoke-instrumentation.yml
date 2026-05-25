@@ -1,0 +1,41 @@
+name: smoke-instrumentation
+
+on:
+  workflow_dispatch:
+
+jobs:
+  android-smoke:
+    name: android-smoke (manual)
+    runs-on: macos-latest
+    timeout-minutes: 12
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Grant gradlew execute permission
+        run: chmod +x gradlew
+
+      - name: Run smoke instrumentation tests
+        uses: ReactiveCircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          disable-animations: true
+          emulator-boot-timeout: 300
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          script: |
+            adb devices -l
+            ./gradlew :app:connectedDebugAndroidTest \
+              -Pandroid.testInstrumentationRunnerArguments.class=com.veda.app.ui.SmokeInstrumentationTest

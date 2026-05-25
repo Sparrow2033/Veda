@@ -1,0 +1,40 @@
+name: merge-gate
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  required-ci:
+    name: required-ci
+    runs-on: macos-latest
+    timeout-minutes: 50
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Grant gradlew execute permission
+        run: chmod +x gradlew
+
+      - name: Assemble Debug
+        run: ./gradlew :app:assembleDebug --stacktrace
+
+      - name: Unit Tests
+        run: ./gradlew :app:testDebugUnitTest --stacktrace
+
+      - name: Android Lint
+        run: ./gradlew :app:lintDebug --stacktrace
+
+      - name: Checkstyle
+        run: ./gradlew :app:checkstyle --stacktrace

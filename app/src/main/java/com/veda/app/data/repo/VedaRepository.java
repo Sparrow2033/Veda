@@ -20,7 +20,6 @@ import com.veda.app.data.entity.NoteListItem;
 import com.veda.app.data.entity.SubjectEntity;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -165,13 +164,7 @@ public final class VedaRepository {
         linkDao.deleteByFromNoteId(fromNoteId);
         if (toNoteIds == null || toNoteIds.isEmpty()) return;
 
-        Set<Long> uniq = new LinkedHashSet<>();
-        for (Long id : toNoteIds) {
-            if (id == null) continue;
-            if (id <= 0) continue;
-            if (id == fromNoteId) continue;
-            uniq.add(id);
-        }
+        Set<Long> uniq = RepoTransforms.sanitizeToNoteIds(fromNoteId, toNoteIds);
         if (uniq.isEmpty()) return;
 
         long now = System.currentTimeMillis();

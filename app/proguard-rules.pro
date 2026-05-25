@@ -1,21 +1,49 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Veda release baseline rules for internal publishing.
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Keep runtime-visible annotations (Room, Json adapters, etc.).
+-keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Preserve line numbers for readable crash stack traces.
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Room entities / DAO / database metadata.
+-keep class androidx.room.** { *; }
+-keep class * extends androidx.room.RoomDatabase { *; }
+-keep @androidx.room.Entity class * { *; }
+-keep @androidx.room.Dao class * { *; }
+-keepclassmembers class * {
+    @androidx.room.* <methods>;
+    @androidx.room.* <fields>;
+}
+
+# Keep JavaScript bridge methods used from WebView JS.
+-keepclassmembers class com.veda.app.ui.graph.GraphActivity$GraphBridge {
+    @android.webkit.JavascriptInterface <methods>;
+}
+
+# GraphViewModel relies on reflection to resolve repository/database entry points by
+# exact class/member names (Class.forName + method/field name heuristics).
+# Preserve these names in release builds so minification cannot break graph loading.
+-keepnames class com.veda.app.data.repo.VedaRepository
+-keep class com.veda.app.data.repo.VedaRepository { *; }
+-keep class com.veda.app.data.db.AppDatabase { *; }
+-keep class com.veda.app.data.dao.** { *; }
+
+# Keep Parcelable creators if introduced by future MVP patches.
+-keepclassmembers class * implements android.os.Parcelable {
+    public static final android.os.Parcelable$Creator CREATOR;
+}
+
+# Keep enum values used by name in serialization / state restoration.
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+# Remove noisy logs in release.
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+    public static *** i(...);
+}

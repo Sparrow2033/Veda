@@ -1,5 +1,8 @@
+import org.gradle.api.plugins.quality.Checkstyle
+
 plugins {
     alias(libs.plugins.android.application)
+    checkstyle
 }
 
 android {
@@ -26,7 +29,10 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            isDebuggable = false
+            isJniDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -37,6 +43,27 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
+}
+
+checkstyle {
+    toolVersion = "10.17.0"
+    configFile = file("$projectDir/config/checkstyle/checkstyle.xml")
+    isIgnoreFailures = false
+}
+
+tasks.register<Checkstyle>("checkstyle") {
+    group = "verification"
+    description = "Runs Checkstyle on Java source sets."
+    source("src/main/java", "src/test/java", "src/androidTest/java")
+    include("**/*.java")
+    classpath = files()
+}
+
+tasks.named("check") {
+    dependsOn("checkstyle")
 }
 
 dependencies {
@@ -50,7 +77,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata:2.8.6")
     implementation("androidx.lifecycle:lifecycle-viewmodel:2.8.6")
     testImplementation(libs.junit)
+    testImplementation("androidx.test:core:1.6.1")
+    testImplementation("org.robolectric:robolectric:4.14.1")
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.7.0")
     androidTestImplementation("androidx.room:room-testing:2.7.1")
 }

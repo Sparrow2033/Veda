@@ -1,30 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="veda_space_2xs">2dp</dimen>
-    <dimen name="veda_space_xs">4dp</dimen>
-    <dimen name="veda_space_sm">8dp</dimen>
-    <dimen name="veda_space_md">12dp</dimen>
-    <dimen name="veda_space_lg">16dp</dimen>
-    <dimen name="veda_space_xl">20dp</dimen>
-    <dimen name="veda_space_2xl">24dp</dimen>
-    <dimen name="veda_space_3xl">32dp</dimen>
-
-    <dimen name="veda_radius_sm">10dp</dimen>
     <dimen name="veda_radius_md">14dp</dimen>
     <dimen name="veda_radius_lg">18dp</dimen>
-    <dimen name="veda_radius_xl">22dp</dimen>
     <dimen name="veda_radius_bottom_bar">20dp</dimen>
 
     <dimen name="veda_stroke_hairline">1dp</dimen>
     <dimen name="veda_stroke_regular">1dp</dimen>
-
-    <dimen name="veda_elevation_none">0dp</dimen>
     <dimen name="veda_elevation_card">1dp</dimen>
     <dimen name="veda_elevation_fab">4dp</dimen>
 
     <dimen name="veda_toolbar_height">56dp</dimen>
-    <dimen name="veda_bottom_bar_height">64dp</dimen>
-    <dimen name="veda_fab_size">56dp</dimen>
 
     <dimen name="veda_text_home_title">28sp</dimen>
     <dimen name="veda_text_screen_title">22sp</dimen>
@@ -32,5 +17,4 @@
     <dimen name="veda_text_title">16sp</dimen>
     <dimen name="veda_text_body">15sp</dimen>
     <dimen name="veda_text_meta">13sp</dimen>
-    <dimen name="veda_text_caption">12sp</dimen>
 </resources>
